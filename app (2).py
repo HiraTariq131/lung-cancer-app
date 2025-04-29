@@ -3,11 +3,11 @@ import joblib
 import base64
 import sys
 
-# Load model and features
+# Load the model and features
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
-# Set background image
+# Set background image without overlay
 def set_background(image_path):
     with open(image_path, "rb") as img_file:
         img_bytes = img_file.read()
@@ -17,59 +17,67 @@ def set_background(image_path):
             .stApp {{
                 background-image: url("data:image/jpg;base64,{encoded}");
                 background-size: cover;
+                background-position: center;
                 background-attachment: fixed;
-            }}
-            .block-container {{
-                background-color: rgba(0, 0, 0, 0.75);
-                padding: 2rem;
-                border-radius: 15px;
                 color: white;
             }}
             h1, h2, h3, p, label {{
                 color: white !important;
+                font-weight: bold;
             }}
             .stButton > button {{
                 color: white;
-                background-color: #0d6efd;
+                background-color: #0077b6;
                 border-radius: 10px;
-                padding: 0.5rem 1rem;
+                padding: 0.6rem 1.2rem;
                 font-size: 16px;
+                margin: 10px 0;
+            }}
+            .css-1y4p8pa, .css-1cpxqw2 {{
+                background-color: transparent !important;
             }}
         </style>
     """, unsafe_allow_html=True)
 
-# Apply background
+# Set background
 set_background("lung image.jpg")
 
 # Title
 st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Classifier</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>Classifying: Normal | Benign | Malignant</h3><hr>", unsafe_allow_html=True)
 
-# Input fields
+# Form for input
 st.markdown("### 🔍 Enter Patient Details Below")
 
 inputs = []
 
+# Features expected to be Yes/No
+yes_no_features = [
+    "smoking", "anxiety", "chronic disease", "fatigue", "allergy",
+    "wheezing", "alcohol", "coughing", "shortness of breath", "yellow fingers"
+]
+
+# Build input form
 for feature in features:
     f_lower = feature.lower()
-    
-    if f_lower in ['gender']:
+
+    if f_lower == "gender":
         gender = st.selectbox("Gender", options=["Male", "Female"])
         inputs.append(1 if gender == "Male" else 0)
 
-    elif f_lower == 'age':
+    elif f_lower == "age":
         age = st.slider("Age", 1, 100, 30)
         inputs.append(age)
 
-    elif f_lower in ['smoking', 'anxiety', 'chronic disease', 'fatigue', 'allergy', 'wheezing', 'alcohol', 'coughing', 'shortness of breath']:
-        val = st.selectbox(f"{feature.capitalize()}", options=["No", "Yes"])
+    elif f_lower in yes_no_features:
+        val = st.selectbox(feature.capitalize(), options=["No", "Yes"])
         inputs.append(1 if val == "Yes" else 0)
 
     else:
-        val = st.number_input(f"{feature.capitalize()}", format="%.2f")
+        val = st.number_input(feature.capitalize(), format="%.2f")
         inputs.append(val)
 
-# Buttons layout
+# Buttons
 col1, col2, col3 = st.columns(3)
 
 with col1:
