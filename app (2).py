@@ -7,7 +7,7 @@ import numpy as np
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
-# Set custom background image
+# Set background image
 def set_background(image_path):
     with open(image_path, "rb") as img:
         b64_img = base64.b64encode(img.read()).decode()
@@ -19,7 +19,7 @@ def set_background(image_path):
             background-attachment: fixed;
             background-position: center;
         }}
-        html, body, [class*="css"] {{
+        h1, h2, h3, h4, h5, h6, p, label, .stSelectbox label {{
             color: white !important;
             font-size: 22px !important;
             font-weight: bold !important;
@@ -29,25 +29,20 @@ def set_background(image_path):
             color: white;
             font-size: 20px;
             border-radius: 10px;
-            padding: 0.6rem 1.5rem;
-            margin-top: 10px;
-        }}
-        h1, h2, h3, h4, h5 {{
-            color: white !important;
-            text-align: center;
-            font-weight: bold !important;
+            padding: 0.6rem 1.2rem;
+            margin: 10px 0;
         }}
         </style>
     """, unsafe_allow_html=True)
 
-# Set background image
+# Set background
 set_background("lung image.jpg")
 
-# Headline
-st.markdown("<h1>🫁 Lung Cancer Prediction</h1>", unsafe_allow_html=True)
-st.markdown("<h3>Result: Positive or Negative Only</h3><hr>", unsafe_allow_html=True)
+# Title
+st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>🔬 Predict: Positive or Negative Only</h3><hr>", unsafe_allow_html=True)
 
-# Yes/No input features
+# Field categories
 yes_no_features = [
     "SMOKING", "YELLOW_FINGERS", "ANXIETY", "PEER_PRESSURE", "CHRONIC DISEASE",
     "FATIGUE", "ALLERGY", "WHEEZING", "ALCOHOL CONSUMING", "COUGHING",
@@ -68,29 +63,30 @@ for feature in features:
     elif feature in yes_no_features:
         value = st.selectbox(label, ["No", "Yes"])
         inputs.append(1 if value == "Yes" else 0)
+    else:
+        value = st.selectbox(label, ["No", "Yes"])
+        inputs.append(1 if value == "Yes" else 0)
 
-# Buttons
+# Button row
 col1, col2, col3 = st.columns(3)
+
 with col1:
     if st.button("🩺 Predict"):
         prediction = model.predict([inputs])[0]
-        proba = np.max(model.predict_proba([inputs])) * 100
+        probability = np.max(model.predict_proba([inputs])) * 100
 
-        st.markdown("## 🧬 Prediction Result:")
+        st.markdown("<h2>🧬 Prediction Result:</h2>", unsafe_allow_html=True)
         if prediction == 0:
-            st.success(f"✅ Negative Lung Cancer ({proba:.2f}% confidence)")
-            st.markdown("### 🟢 Health Tip:")
-            st.markdown("- Keep a balanced diet 🥦")
-            st.markdown("- Exercise regularly 🏃")
-            st.markdown("- Avoid smoking and pollution 🚭")
+            st.success(f"✅ **Negative Lung Cancer** ({probability:.2f}% confidence)")
+            st.info("🟢 Stay healthy! No signs of lung cancer detected.")
+            st.markdown("**🥗 Health Tip:** Eat fruits, veggies, stay active, avoid smoking.")
         else:
-            st.error(f"🚨 Positive Lung Cancer Detected ({proba:.2f}% confidence)")
-            st.markdown("### 🔴 Recommendation:")
-            st.markdown("- Consult an oncologist immediately 🩺")
-            st.markdown("### 🍽️ Suggested Healthy Foods:")
-            st.markdown("- Broccoli, Spinach, Garlic")
-            st.markdown("- Berries, Green Tea")
-            st.markdown("- Omega-3 Rich Fish")
+            st.error(f"🚨 **Positive Lung Cancer** ({probability:.2f}% confidence)")
+            st.warning("📝 See an oncologist immediately.")
+            st.markdown("**🍎 Healthy Food Suggestions:**")
+            st.markdown("- Broccoli, Spinach, Berries")
+            st.markdown("- Garlic, Ginger, Green Tea")
+            st.markdown("- Omega-3 rich Fish")
 
 with col2:
     if st.button("🔄 Clear"):
@@ -98,9 +94,8 @@ with col2:
 
 with col3:
     if st.button("❌ Exit"):
-        st.markdown("### Thank you for using the Lung Cancer Classifier.")
+        st.markdown("### Thank you for using the Lung Cancer Predictor App.")
         st.stop()
 
-# Footer
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Made with ❤️ by Hira Tariq | 2025</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: white; font-size: 18px;'>Made with ❤️ by Hira Tariq | 2025</p>", unsafe_allow_html=True)
