@@ -8,11 +8,11 @@ from PIL import Image
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
-# Background Image and Styling
+# New working background image
 st.markdown("""
     <style>
     .stApp {
-        background-image: url("https://i.imgur.com/ZFzn7V3.jpg");
+        background-image: url("https://i.ibb.co/GFz5y2N/lung-cancer-background.jpg");
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -32,21 +32,21 @@ st.markdown("Provide the following health details:")
 
 # Dynamic input handling using st.selectbox or st.slider
 def user_input():
-    gender = st.selectbox("Gender", ["Male", "Female"])
-    age = st.slider("Age", 20, 100, 50)
-    smoking = st.selectbox("Do you smoke?", ["Yes", "No"])
-    yellow_fingers = st.selectbox("Yellow fingers?", ["Yes", "No"])
-    anxiety = st.selectbox("Do you feel anxious?", ["Yes", "No"])
-    peer_pressure = st.selectbox("Peer pressure exposure?", ["Yes", "No"])
-    chronic_disease = st.selectbox("Chronic disease?", ["Yes", "No"])
-    fatigue = st.selectbox("Fatigue experience?", ["Yes", "No"])
-    allergy = st.selectbox("Do you have allergies?", ["Yes", "No"])
-    wheezing = st.selectbox("Wheezing symptoms?", ["Yes", "No"])
-    alcohol = st.selectbox("Alcohol consumption?", ["Yes", "No"])
-    coughing = st.selectbox("Do you cough regularly?", ["Yes", "No"])
-    short_breath = st.selectbox("Shortness of breath?", ["Yes", "No"])
-    swallowing_diff = st.selectbox("Swallowing difficulty?", ["Yes", "No"])
-    chest_pain = st.selectbox("Chest pain?", ["Yes", "No"])
+    gender = st.selectbox("Gender", ["Male", "Female"], key="gender")
+    age = st.slider("Age", 20, 100, 50, key="age")
+    smoking = st.selectbox("Do you smoke?", ["Yes", "No"], key="smoking")
+    yellow_fingers = st.selectbox("Yellow fingers?", ["Yes", "No"], key="yellow_fingers")
+    anxiety = st.selectbox("Do you feel anxious?", ["Yes", "No"], key="anxiety")
+    peer_pressure = st.selectbox("Peer pressure exposure?", ["Yes", "No"], key="peer_pressure")
+    chronic_disease = st.selectbox("Chronic disease?", ["Yes", "No"], key="chronic_disease")
+    fatigue = st.selectbox("Fatigue experience?", ["Yes", "No"], key="fatigue")
+    allergy = st.selectbox("Do you have allergies?", ["Yes", "No"], key="allergy")
+    wheezing = st.selectbox("Wheezing symptoms?", ["Yes", "No"], key="wheezing")
+    alcohol = st.selectbox("Alcohol consumption?", ["Yes", "No"], key="alcohol")
+    coughing = st.selectbox("Do you cough regularly?", ["Yes", "No"], key="coughing")
+    short_breath = st.selectbox("Shortness of breath?", ["Yes", "No"], key="short_breath")
+    swallowing_diff = st.selectbox("Swallowing difficulty?", ["Yes", "No"], key="swallowing_diff")
+    chest_pain = st.selectbox("Chest pain?", ["Yes", "No"], key="chest_pain")
 
     data = [gender, age, smoking, yellow_fingers, anxiety, peer_pressure,
             chronic_disease, fatigue, allergy, wheezing, alcohol, coughing,
