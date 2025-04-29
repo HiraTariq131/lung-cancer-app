@@ -1,68 +1,70 @@
 import streamlit as st
-import numpy as np
-import pandas as pd
 import joblib
-from PIL import Image
+import numpy as np
 
-# Load model and features
+# Load the trained model and features
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
-# New working background image
+# Set custom page background using inline CSS
 st.markdown("""
     <style>
     .stApp {
-        background-image: url("https://i.ibb.co/GFz5y2N/lung-cancer-background.jpg");
+        background-image: url("https://cdn.pixabay.com/photo/2016/10/24/17/14/lungs-1761277_1280.jpg");
         background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+        background-position: center;
         color: white;
     }
-    .css-1d391kg {
-        background-color: rgba(0, 0, 0, 0.6);
-        border-radius: 10px;
-        padding: 20px;
+    .title {
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+    }
+    .subtitle {
+        text-align: center;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .stButton>button {
+        background-color: #ff4b4b;
+        color: white;
+        font-weight: bold;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Title and Introduction
-st.title("🫁 Lung Cancer Prediction App")
-st.markdown("Provide the following health details:")
+st.markdown("<div class='title'>🫁 Lung Cancer Prediction App</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Provide the following health details:</div>", unsafe_allow_html=True)
 
-# Dynamic input handling using st.selectbox or st.slider
-def user_input():
-    gender = st.selectbox("Gender", ["Male", "Female"], key="gender")
-    age = st.slider("Age", 20, 100, 50, key="age")
-    smoking = st.selectbox("Do you smoke?", ["Yes", "No"], key="smoking")
-    yellow_fingers = st.selectbox("Yellow fingers?", ["Yes", "No"], key="yellow_fingers")
-    anxiety = st.selectbox("Do you feel anxious?", ["Yes", "No"], key="anxiety")
-    peer_pressure = st.selectbox("Peer pressure exposure?", ["Yes", "No"], key="peer_pressure")
-    chronic_disease = st.selectbox("Chronic disease?", ["Yes", "No"], key="chronic_disease")
-    fatigue = st.selectbox("Fatigue experience?", ["Yes", "No"], key="fatigue")
-    allergy = st.selectbox("Do you have allergies?", ["Yes", "No"], key="allergy")
-    wheezing = st.selectbox("Wheezing symptoms?", ["Yes", "No"], key="wheezing")
-    alcohol = st.selectbox("Alcohol consumption?", ["Yes", "No"], key="alcohol")
-    coughing = st.selectbox("Do you cough regularly?", ["Yes", "No"], key="coughing")
-    short_breath = st.selectbox("Shortness of breath?", ["Yes", "No"], key="short_breath")
-    swallowing_diff = st.selectbox("Swallowing difficulty?", ["Yes", "No"], key="swallowing_diff")
-    chest_pain = st.selectbox("Chest pain?", ["Yes", "No"], key="chest_pain")
+# Input fields
+gender = st.selectbox("Gender", ["Male", "Female"])
+age = st.slider("Age", 20, 100, 50)
+smoking = st.selectbox("Do you smoke?", ["Yes", "No"])
+anxiety = st.selectbox("Do you feel anxious?", ["Yes", "No"])
+fatigue = st.selectbox("Do you feel fatigue?", ["Yes", "No"])
+weight_loss = st.selectbox("Have you experienced weight loss?", ["Yes", "No"])
 
-    data = [gender, age, smoking, yellow_fingers, anxiety, peer_pressure,
-            chronic_disease, fatigue, allergy, wheezing, alcohol, coughing,
-            short_breath, swallowing_diff, chest_pain]
+# Map inputs to numeric
+input_data = {
+    "GENDER": 1 if gender == "Male" else 0,
+    "AGE": age,
+    "SMOKING": 1 if smoking == "Yes" else 0,
+    "ANXIETY": 1 if anxiety == "Yes" else 0,
+    "FATIGUE": 1 if fatigue == "Yes" else 0,
+    "WEIGHTLOSS": 1 if weight_loss == "Yes" else 0
+}
 
-    # Encoding: Yes/No → 1/2, Male/Female → 1/2
-    encoding = {"Male": 1, "Female": 2, "Yes": 1, "No": 2}
-    encoded_data = [encoding.get(val, val) for val in data]
-    return np.array(encoded_data).reshape(1, -1)
+# Extract feature values in correct order
+input_list = [input_data.get(feat, 0) for feat in features]
+input_array = np.array(input_list).reshape(1, -1)
 
-# Button for prediction
+# Predict button
 if st.button("Predict"):
-    input_data = user_input()
-    pred = model.predict(input_data)[0]
-    result = "Likely Lung Cancer ❗" if pred == 1 else "No Lung Cancer ✅"
-    
-    # Display the prediction result with styling
-    st.subheader("🩺 Prediction Result:")
-    st.success(result)
+    prediction = model.predict(input_array)[0]
+    if prediction == 0:
+        st.success("✅ Result: Normal")
+    elif prediction == 1:
+        st.warning("⚠️ Result: Benign (Non-cancerous)")
+    else:
+        st.error("❌ Result: Malignant (Cancerous)")
