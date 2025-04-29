@@ -36,7 +36,7 @@ def set_background(image_path):
 set_background("lung image.jpg")
 
 st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
-st.markdown("<h4 style='text-align: center;'>Normal | Benign | Malignant</h4><hr>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center;'>positive/negative</h4><hr>", unsafe_allow_html=True)
 
 # Field categories
 yes_no_features = [
@@ -59,7 +59,7 @@ for feature in features:
         value = st.selectbox(feature.replace("_", " ").title(), ["No", "Yes"])
         inputs.append(1 if value == "Yes" else 0)
     else:
-        value = st.number_input(feature.replace("_", " ").title(), 0.0, 100.0)
+        value = st.number_input(feature.replace("_", " ").title(), ["No", "Yes"])
         inputs.append(value)
 
 # Buttons
@@ -73,9 +73,6 @@ with col1:
         if prediction == 0:
             st.success(f"✅ **Negative Lung Cancer** ({proba:.2f}% confidence)")
             st.info("🟢 Health Tip: Keep up a healthy lifestyle! No cancer detected.")
-        elif prediction == 1:
-            st.warning(f"⚠️ **Benign** ({proba:.2f}% confidence)")
-            st.info("🟡 Regular checkups recommended.")
         else:
             st.error(f"🚨 **Positive Lung Cancer Detected** ({proba:.2f}% confidence)")
             st.warning("📝 Recommendation: Consult an oncologist immediately.")
