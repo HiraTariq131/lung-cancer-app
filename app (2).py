@@ -5,7 +5,7 @@ import joblib
 from PIL import Image
 
 # Load model and features
-model = joblib.load("lung_model.pkl")
+model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
 st.set_page_config(page_title="Lung Cancer Classifier", layout="centered")
