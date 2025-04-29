@@ -5,13 +5,9 @@ import numpy as np
 
 # Load model and features
 model = joblib.load("lung_model.joblib")
-features = [
-    'GENDER', 'AGE', 'SMOKING', 'YELLOW FINGERS', 'ANXIETY', 'PEER PRESSURE',
-    'CHRONIC DISEASE', 'FATIGUE', 'ALLERGY', 'WHEEZING', 'ALCOHOL CONSUMING',
-    'COUGHING', 'SHORTNESS BREATH', 'SWALLOWING DIFFICULTY', 'CHEST PAIN'
-]
+features = joblib.load("features.joblib")
 
-# Set custom background
+# Set white text and custom background
 def set_background(image_path):
     with open(image_path, "rb") as img:
         b64_img = base64.b64encode(img.read()).decode()
@@ -22,10 +18,10 @@ def set_background(image_path):
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
-            color: white;
         }}
-        h1, h2, h3, h4, h5, label, .stRadio label {{
+        html, body, [class*="css"] {{
             color: white !important;
+            font-size: 18px;
             font-weight: bold;
         }}
         .stButton > button {{
@@ -38,35 +34,38 @@ def set_background(image_path):
         </style>
     """, unsafe_allow_html=True)
 
-# Set your background image
 set_background("lung image.jpg")
 
-# Title and description
 st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
-st.markdown("<h4 style='text-align: center;'>Prediction: Positive / Negative Lung Cancer</h4><hr>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>🔍 Result: Positive or Negative</h3><hr>", unsafe_allow_html=True)
+st.markdown("### ➤ Enter Patient Details")
 
-# Input form
-inputs = []
-yes_no_fields = [
-    "SMOKING", "YELLOW FINGERS", "ANXIETY", "PEER PRESSURE",
-    "CHRONIC DISEASE", "FATIGUE", "ALLERGY", "WHEEZING", "ALCOHOL CONSUMING",
-    "COUGHING", "SHORTNESS BREATH", "SWALLOWING DIFFICULTY", "CHEST PAIN"
+# Define binary features
+yes_no_features = [
+    "SMOKING", "YELLOW_FINGERS", "ANXIETY", "PEER_PRESSURE", "CHRONIC DISEASE",
+    "FATIGUE", "ALLERGY", "WHEEZING", "ALCOHOL CONSUMING", "COUGHING",
+    "SHORTNESS OF BREATH", "SWALLOWING DIFFICULTY", "CHEST PAIN"
 ]
 
+inputs = []
+
+# Generate input fields
 for feature in features:
-    label = feature.replace("_", " ").title()
-
+    display_name = feature.replace("_", " ").title()
     if feature == "GENDER":
-        gender = st.selectbox("Gender", ["Male", "Female"])
-        inputs.append(1 if gender == "Male" else 0)
+        value = st.selectbox("Gender", ["Male", "Female"])
+        inputs.append(1 if value == "Male" else 0)
     elif feature == "AGE":
-        age = st.slider("Age", 10, 100, 30)
-        inputs.append(age)
-    elif feature in yes_no_fields:
-        val = st.selectbox(label, ["No", "Yes"])
-        inputs.append(1 if val == "Yes" else 0)
+        value = st.slider("Age", 10, 100, 30)
+        inputs.append(value)
+    elif feature in yes_no_features:
+        value = st.selectbox(display_name, ["No", "Yes"])
+        inputs.append(1 if value == "Yes" else 0)
+    else:
+        value = st.selectbox(display_name, ["No", "Yes"])
+        inputs.append(1 if value == "Yes" else 0)
 
-# Buttons
+# Button section
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -76,15 +75,15 @@ with col1:
 
         st.markdown("## 🧬 Prediction Result:")
         if prediction == 0:
-            st.success(f"✅ **Negative Lung Cancer** ({proba:.2f}% confidence)")
-            st.info("🟢 Health Tip: Maintain regular checkups and a healthy lifestyle.")
+            st.success(f"✅ Negative Lung Cancer ({proba:.2f}% confidence)")
+            st.info("🟢 Health Tip: Keep exercising, avoid smoking, and eat healthy.")
         else:
-            st.error(f"🚨 **Positive Lung Cancer** ({proba:.2f}% confidence)")
-            st.warning("📝 Recommendation: Please consult a medical specialist immediately.")
+            st.error(f"🚨 Positive Lung Cancer Detected ({proba:.2f}% confidence)")
+            st.warning("📝 Recommendation: Consult an oncologist immediately.")
             st.markdown("**🍏 Suggested Healthy Foods:**")
-            st.markdown("- Broccoli, Spinach, Garlic")
-            st.markdown("- Berries, Green Tea")
-            st.markdown("- Omega-3 rich Fish, Nuts")
+            st.markdown("- Broccoli, Spinach, Berries")
+            st.markdown("- Garlic, Ginger, Green Tea")
+            st.markdown("- Omega-3 rich Fish")
 
 with col2:
     if st.button("🔄 Clear"):
@@ -92,8 +91,9 @@ with col2:
 
 with col3:
     if st.button("❌ Exit"):
-        st.markdown("### Thank you for using the Lung Cancer Classifier.")
+        st.markdown("### Thank you for using the Lung Cancer App.")
         st.stop()
 
+# Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: white;'>Made with ❤️ by Hira Tariq | 2025</p>", unsafe_allow_html=True)
