@@ -1,75 +1,56 @@
 import streamlit as st
 import joblib
-import numpy as np
 import base64
 
-# Load model and features
+# Load your model
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
-# Set background
+# Set background using your image
 def set_background(png_file):
     with open(png_file, "rb") as f:
         data = f.read()
-    encoded = base64.b64encode(data).decode()
-    st.markdown(f"""
-        <style>
-        .stApp {{
-            background-image: url("data:image/png;base64,{encoded}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }}
-        </style>
-    """, unsafe_allow_html=True)
+        encoded = base64.b64encode(data).decode()
+        st.markdown(
+            f"""
+            <style>
+            .stApp {{
+                background-image: url("data:image/jpg;base64,{encoded}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
 
-# Use your uploaded background image here 👇
-set_background("/mnt/data/8aa572a2-f861-4fd2-81de-2ecf6f001670.png")
+# Set your uploaded image as background
+set_background("lung image.jpg")
 
-# Stylish Title
-st.markdown("""
-    <h1 style='text-align: center; color: white; font-size: 50px;'>🫁 Lung Cancer Prediction</h1>
-    <h4 style='text-align: center; color: white;'>Enter your health details to check the result</h4>
-""", unsafe_allow_html=True)
+# Main app title
+st.markdown("<h1 style='text-align: center; color: white;'>Lung Cancer Detection App</h1>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center; color: white;'>Normal vs Benign vs Malignant</h4>", unsafe_allow_html=True)
+st.markdown("---")
 
-# Input Section in light box
-st.markdown("<div style='padding: 25px; background-color: rgba(255,255,255,0.90); border-radius: 15px;'>", unsafe_allow_html=True)
+# Input fields
+st.markdown("### 🔍 Enter Patient Details:")
+user_input = []
+for feature in features:
+    val = st.number_input(f"{feature}", step=1.0, format="%.2f")
+    user_input.append(val)
 
-gender = st.selectbox("Gender", ["Male", "Female"])
-age = st.slider("Age", 20, 100, 45)
-smoking = st.selectbox("Do you smoke?", ["Yes", "No"])
-anxiety = st.selectbox("Do you feel anxious?", ["Yes", "No"])
-fatigue = st.selectbox("Do you feel fatigue?", ["Yes", "No"])
-weight_loss = st.selectbox("Have you experienced weight loss?", ["Yes", "No"])
-cough = st.selectbox("Do you have persistent cough?", ["Yes", "No"])
-shortness_breath = st.selectbox("Do you feel shortness of breath?", ["Yes", "No"])
-chest_pain = st.selectbox("Do you feel chest pain?", ["Yes", "No"])
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-# Convert input to model format
-input_data = {
-    "GENDER": 1 if gender == "Male" else 0,
-    "AGE": age,
-    "SMOKING": 1 if smoking == "Yes" else 0,
-    "ANXIETY": 1 if anxiety == "Yes" else 0,
-    "FATIGUE": 1 if fatigue == "Yes" else 0,
-    "WEIGHTLOSS": 1 if weight_loss == "Yes" else 0,
-    "COUGH": 1 if cough == "Yes" else 0,
-    "SHORTNESSOFBREATH": 1 if shortness_breath == "Yes" else 0,
-    "CHESTPAIN": 1 if chest_pain == "Yes" else 0,
-}
-
-# Arrange features in order
-input_list = [input_data.get(feat, 0) for feat in features]
-input_array = np.array(input_list).reshape(1, -1)
-
-# Predict
-if st.button("🔍 Predict", key="predict_button"):
-    result = model.predict(input_array)[0]
-    if result == 0:
-        st.success("✅ Result: Normal")
-    elif result == 1:
-        st.warning("⚠️ Result: Benign (Non-cancerous)")
+# Predict button
+if st.button("Predict 🩺"):
+    pred = model.predict([user_input])[0]
+    st.markdown("### 🧬 Prediction Result:")
+    if pred == 0:
+        st.success("✅ Normal")
+    elif pred == 1:
+        st.warning("⚠️ Benign Tumor Detected")
     else:
-        st.error("❌ Result: Malignant (Cancerous)")
+        st.error("🚨 Malignant Tumor Detected")
+
+# Add footer or any extra text
+st.markdown("<hr style='border: 1px solid white;'>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: white;'>© 2025 Lung Cancer Classifier | By Hira</p>", unsafe_allow_html=True)
