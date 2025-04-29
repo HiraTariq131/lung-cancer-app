@@ -19,7 +19,13 @@ def set_background(image_path):
             background-attachment: fixed;
             background-position: center;
         }}
-        h1, h2, h3, h4, h5, h6, p, label, .stSelectbox label {{
+        h1 {{
+            color: white !important;
+            font-size: 60px !important;
+            font-weight: bold !important;
+            text-align: center;
+        }}
+        h2, h3, h4, h5, h6, p, label, .stSelectbox label {{
             color: white !important;
             font-size: 22px !important;
             font-weight: bold !important;
@@ -39,7 +45,7 @@ def set_background(image_path):
 set_background("lung image.jpg")
 
 # Title
-st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
+st.markdown("<h1>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>🔬 Predict: Positive or Negative Only</h3><hr>", unsafe_allow_html=True)
 
 # Field categories
