@@ -1,6 +1,6 @@
-
 import streamlit as st
 import numpy as np
+import pandas as pd
 import joblib
 from PIL import Image
 
@@ -8,22 +8,29 @@ from PIL import Image
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
-st.set_page_config(page_title="Lung Cancer Classifier", layout="centered")
-
+# Background Image and Styling
 st.markdown("""
     <style>
-    .main {
-        background-image: url('https://i.imgur.com/JzAJkG7.jpg');
+    .stApp {
+        background-image: url("https://i.imgur.com/ZFzn7V3.jpg");
         background-size: cover;
-        padding: 2rem;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
         color: white;
+    }
+    .css-1d391kg {
+        background-color: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 20px;
     }
     </style>
 """, unsafe_allow_html=True)
 
+# Title and Introduction
 st.title("🫁 Lung Cancer Prediction App")
 st.markdown("Provide the following health details:")
 
+# Dynamic input handling using st.selectbox or st.slider
 def user_input():
     gender = st.selectbox("Gender", ["Male", "Female"])
     age = st.slider("Age", 20, 100, 50)
@@ -45,13 +52,17 @@ def user_input():
             chronic_disease, fatigue, allergy, wheezing, alcohol, coughing,
             short_breath, swallowing_diff, chest_pain]
 
+    # Encoding: Yes/No → 1/2, Male/Female → 1/2
     encoding = {"Male": 1, "Female": 2, "Yes": 1, "No": 2}
     encoded_data = [encoding.get(val, val) for val in data]
     return np.array(encoded_data).reshape(1, -1)
 
+# Button for prediction
 if st.button("Predict"):
     input_data = user_input()
     pred = model.predict(input_data)[0]
     result = "Likely Lung Cancer ❗" if pred == 1 else "No Lung Cancer ✅"
+    
+    # Display the prediction result with styling
     st.subheader("🩺 Prediction Result:")
     st.success(result)
