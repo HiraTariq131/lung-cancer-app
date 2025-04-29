@@ -1,74 +1,97 @@
 import streamlit as st
 import joblib
 import base64
+import sys
 
 # Load model and features
 model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
 # Set background image
-def set_background(png_file):
-    with open(png_file, "rb") as f:
-        data = f.read()
-        encoded = base64.b64encode(data).decode()
-    st.markdown(
-        f"""
+def set_background(image_path):
+    with open(image_path, "rb") as img_file:
+        img_bytes = img_file.read()
+        encoded = base64.b64encode(img_bytes).decode()
+    st.markdown(f"""
         <style>
-        .stApp {{
-            background-image: url("data:image/jpg;base64,{encoded}");
-            background-size: cover;
-            background-attachment: fixed;
-            color: white;
-        }}
-        .block-container {{
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 2rem;
-            border-radius: 12px;
-        }}
+            .stApp {{
+                background-image: url("data:image/jpg;base64,{encoded}");
+                background-size: cover;
+                background-attachment: fixed;
+            }}
+            .block-container {{
+                background-color: rgba(0, 0, 0, 0.75);
+                padding: 2rem;
+                border-radius: 15px;
+                color: white;
+            }}
+            h1, h2, h3, p, label {{
+                color: white !important;
+            }}
+            .stButton > button {{
+                color: white;
+                background-color: #0d6efd;
+                border-radius: 10px;
+                padding: 0.5rem 1rem;
+                font-size: 16px;
+            }}
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
-# Set your lung background
+# Apply background
 set_background("lung image.jpg")
 
-# Header
-st.markdown("<h1 style='text-align: center; color: white;'>🫁 Lung Cancer Prediction</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: white;'>Classifies: Normal, Benign, Malignant</h3>", unsafe_allow_html=True)
-st.markdown(" ")
+# Title
+st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Classifier</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Classifying: Normal | Benign | Malignant</h3><hr>", unsafe_allow_html=True)
 
-# Start input form
-st.markdown("### 🔍 Enter Patient Details Below:")
+# Input fields
+st.markdown("### 🔍 Enter Patient Details Below")
 
-user_input = []
+inputs = []
+
 for feature in features:
-    if feature.lower() in ['gender', 'smoking', 'anxiety', 'chronic disease', 'fatigue', 'allergy', 'wheezing', 'alcohol', 'coughing']:
-        option = st.selectbox(f"{feature.capitalize()}",
-                              options=[0, 1],
-                              format_func=lambda x: "Yes" if x == 1 else "No")
-        user_input.append(option)
-    elif feature.lower() == 'age':
-        age = st.slider("Age", 1, 100, 30)
-        user_input.append(age)
-    elif feature.lower() == 'shortness of breath':
-        option = st.selectbox("Shortness of Breath", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
-        user_input.append(option)
-    else:
-        val = st.number_input(f"{feature.capitalize()}", step=1.0, format="%.2f")
-        user_input.append(val)
+    f_lower = feature.lower()
+    
+    if f_lower in ['gender']:
+        gender = st.selectbox("Gender", options=["Male", "Female"])
+        inputs.append(1 if gender == "Male" else 0)
 
-# Prediction Button
-if st.button("🩺 Predict Result"):
-    prediction = model.predict([user_input])[0]
-    st.markdown("## 🧬 Result:")
-    if prediction == 0:
-        st.success("✅ Normal - No cancer detected.")
-    elif prediction == 1:
-        st.warning("⚠️ Benign - Non-cancerous tumor detected.")
+    elif f_lower == 'age':
+        age = st.slider("Age", 1, 100, 30)
+        inputs.append(age)
+
+    elif f_lower in ['smoking', 'anxiety', 'chronic disease', 'fatigue', 'allergy', 'wheezing', 'alcohol', 'coughing', 'shortness of breath']:
+        val = st.selectbox(f"{feature.capitalize()}", options=["No", "Yes"])
+        inputs.append(1 if val == "Yes" else 0)
+
     else:
-        st.error("🚨 Malignant - Cancer detected. Immediate action recommended!")
+        val = st.number_input(f"{feature.capitalize()}", format="%.2f")
+        inputs.append(val)
+
+# Buttons layout
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("🩺 Predict"):
+        prediction = model.predict([inputs])[0]
+        st.markdown("## 🧬 Prediction Result:")
+        if prediction == 0:
+            st.success("✅ **Normal** — No signs of cancer detected.")
+        elif prediction == 1:
+            st.warning("⚠️ **Benign** — Non-cancerous condition detected.")
+        else:
+            st.error("🚨 **Malignant** — Cancer detected. Immediate medical action advised!")
+
+with col2:
+    if st.button("🔄 Clear"):
+        st.experimental_rerun()
+
+with col3:
+    if st.button("❌ Exit"):
+        st.markdown("### Thank you for using the Lung Cancer App.")
+        st.stop()
 
 # Footer
-st.markdown("<hr style='border: 1px solid white;'>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: white;'>© 2025 Lung Cancer App | Developed by Hira Tariq</p>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: white;'>Made with ❤️ by Hira Tariq | 2025</p>", unsafe_allow_html=True)
