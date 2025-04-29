@@ -1,87 +1,105 @@
 import streamlit as st
-import pickle
-import numpy as np
+import joblib
+import base64
+import sys
 
-# Load the model
-model = pickle.load(open('model.pkl', 'rb'))
+# Load the model and features
+model = joblib.load("lung_model.joblib")
+features = joblib.load("features.joblib")
 
-st.set_page_config(layout="centered")
+# Set background image without overlay
+def set_background(image_path):
+    with open(image_path, "rb") as img_file:
+        img_bytes = img_file.read()
+        encoded = base64.b64encode(img_bytes).decode()
+    st.markdown(f"""
+        <style>
+            .stApp {{
+                background-image: url("data:image/jpg;base64,{encoded}");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                color: white;
+            }}
+            h1, h2, h3, p, label {{
+                color: white !important;
+                font-weight: bold;
+            }}
+            .stButton > button {{
+                color: white;
+                background-color: #0077b6;
+                border-radius: 10px;
+                padding: 0.6rem 1.2rem;
+                font-size: 16px;
+                margin: 10px 0;
+            }}
+            .css-1y4p8pa, .css-1cpxqw2 {{
+                background-color: transparent !important;
+            }}
+        </style>
+    """, unsafe_allow_html=True)
 
-# Background image setup using HTML and CSS
-page_bg_img = f"""
-<style>
-[data-testid="stAppViewContainer"] {{
-    background-image: url("https://raw.githubusercontent.com/yourusername/yourrepo/main/background.jpg");  /* Replace with your image URL */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}}
-h1, h2, h3, h4, h5, h6, .stTextInput > label, .stSelectbox > label {{
-    color: white !important;
-}}
-</style>
-"""
-st.markdown(page_bg_img, unsafe_allow_html=True)
+# Set background
+set_background("lung image.jpg")
 
-st.markdown("<h1 style='text-align: center; color: white;'>🩺 Lung Cancer Classifier</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: white;'>Classifying: Normal | Benign | Malignant</h3>", unsafe_allow_html=True)
-st.markdown("<h4 style='color: white;'>🔍 Enter Patient Details Below</h4>", unsafe_allow_html=True)
+# Title
+st.markdown("<h1 style='text-align: center;'>🫁 Lung Cancer Classifier</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Classifying: Normal | Benign | Malignant</h3><hr>", unsafe_allow_html=True)
 
-# Input fields
-gender = st.selectbox("Gender", ["Male", "Female"])
-age = st.slider("Age", 1, 100, 25)
-smoking = st.selectbox("Smoking", ["Yes", "No"])
-yellow_fingers = st.selectbox("Yellow Fingers", ["Yes", "No"])
-anxiety = st.selectbox("Anxiety", ["Yes", "No"])
-peer_pressure = st.selectbox("Peer Pressure", ["Yes", "No"])
-chronic_disease = st.selectbox("Chronic Disease", ["Yes", "No"])
-fatigue = st.selectbox("Fatigue", ["Yes", "No"])
-allergy = st.selectbox("Allergy", ["Yes", "No"])
+# Form for input
+st.markdown("### 🔍 Enter Patient Details Below")
 
-# Button row
-col1, col2, col3 = st.columns(3)
-with col1:
-    predict_button = st.button("🔍 Predict")
-with col2:
-    clear_button = st.button("🔄 Clear")
-with col3:
-    exit_button = st.button("❌ Exit")
+inputs = []
 
-def convert_to_binary(value):
-    return 1 if value == "Yes" or value == "Male" else 0
+# Features expected to be Yes/No
+yes_no_features = [
+    "smoking", "anxiety", "chronic disease", "fatigue", "allergy",
+    "wheezing", "alcohol", "coughing", "shortness of breath", "yellow fingers"
+]
 
-if predict_button:
-    # Convert all inputs to numerical
-    data = np.array([
-        convert_to_binary(gender),
-        age,
-        convert_to_binary(smoking),
-        convert_to_binary(yellow_fingers),
-        convert_to_binary(anxiety),
-        convert_to_binary(peer_pressure),
-        convert_to_binary(chronic_disease),
-        convert_to_binary(fatigue),
-        convert_to_binary(allergy)
-    ]).reshape(1, -1)
+# Build input form
+for feature in features:
+    f_lower = feature.lower()
 
-    prediction = model.predict(data)[0]
-    probability = np.max(model.predict_proba(data)) * 100
+    if f_lower == "gender":
+        gender = st.selectbox("Gender", options=["Male", "Female"])
+        inputs.append(1 if gender == "Male" else 0)
 
-    if prediction == 0:
-        st.success(f"✅ Result: **Negative Lung Cancer** ({probability:.2f}% confidence)")
-        st.info("🟢 Health Tip: Continue with a healthy lifestyle. Regular checkups recommended.")
+    elif f_lower == "age":
+        age = st.slider("Age", 1, 100, 30)
+        inputs.append(age)
+
+    elif f_lower in yes_no_features:
+        val = st.selectbox(feature.capitalize(), options=["No", "Yes"])
+        inputs.append(1 if val == "Yes" else 0)
+
     else:
-        st.error(f"⚠️ Result: **Positive Lung Cancer** ({probability:.2f}% confidence)")
-        st.warning("📝 Recommendation: Consult a specialist immediately.")
-        st.markdown("**🍎 Suggested Healthy Foods:**")
-        st.markdown("- Broccoli, Spinach")
-        st.markdown("- Berries")
-        st.markdown("- Garlic and Ginger")
-        st.markdown("- Green Tea")
-        st.markdown("- Fish (Omega-3 rich)")
+        val = st.number_input(feature.capitalize(), format="%.2f")
+        inputs.append(val)
 
-if clear_button:
-    st.experimental_rerun()
+# Buttons
+col1, col2, col3 = st.columns(3)
 
-if exit_button:
-    st.stop()
+with col1:
+    if st.button("🩺 Predict"):
+        prediction = model.predict([inputs])[0]
+        st.markdown("## 🧬 Prediction Result:")
+        if prediction == 0:
+            st.success("✅ **Normal** — No signs of cancer detected.")
+        elif prediction == 1:
+            st.warning("⚠️ **Benign** — Non-cancerous condition detected.")
+        else:
+            st.error("🚨 **Malignant** — Cancer detected. Immediate medical action advised!")
+
+with col2:
+    if st.button("🔄 Clear"):
+        st.experimental_rerun()
+
+with col3:
+    if st.button("❌ Exit"):
+        st.markdown("### Thank you for using the Lung Cancer App.")
+        st.stop()
+
+# Footer
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: white;'>Made with ❤️ by Hira Tariq | 2025</p>", unsafe_allow_html=True)
