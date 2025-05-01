@@ -33,10 +33,24 @@ def set_background(image_file):
 # Set background
 set_background("blue lung image.jpg")
 
-
-# Title
-st.markdown("<h1>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center;'>🔬 Predict: Positive or Negative Only</h3><hr>", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    .stApp {
+        color: white;
+    }
+    h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .css-1cpxqw2, .css-10trblm {
+        color: white !important;
+        font-weight: bold !important;
+        font-size: 20px !important;
+    }
+    .css-1cpxqw2 {
+        font-size: 30px !important;
+    }
+    .stSlider > div > div > div > div {
+        color: white !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Field categories
 yes_no_features = [
