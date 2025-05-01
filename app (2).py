@@ -85,16 +85,16 @@ with col1:
 
         st.markdown("<h2>🧬 Prediction Result:</h2>", unsafe_allow_html=True)
         if prediction == 1:
+            st.success(f"✅ **Negative Lung Cancer** ({probability:.2f}% confidence)")
+            st.info("🟢 Stay healthy! No signs of lung cancer detected.")
+            st.markdown("**🥗 Health Tip:** Eat fruits, veggies, stay active, avoid smoking.")
+        else:
             st.error(f"🚨 **Positive Lung Cancer** ({probability:.2f}% confidence)")
             st.warning("📝 See an oncologist immediately.")
             st.markdown("**🍎 Healthy Food Suggestions:**")
             st.markdown("- Broccoli, Spinach, Berries")
             st.markdown("- Garlic, Ginger, Green Tea")
             st.markdown("- Omega-3 rich Fish")
-        else:
-            st.success(f"✅ **Negative Lung Cancer** ({probability:.2f}% confidence)")
-            st.info("🟢 Stay healthy! No signs of lung cancer detected.")
-            st.markdown("**🥗 Health Tip:** Eat fruits, veggies, stay active, avoid smoking.")
        
 with col2:
     if st.button("🔄 Clear"):
