@@ -17,8 +17,7 @@ def set_background(image_path):
             background-image: url("data:image/jpg;base64,{b64_img}");
             background-size: cover;
             background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-position: center,center;
+            background-position: center;
         }}
         h1 {{
             color: white !important;
@@ -43,12 +42,11 @@ def set_background(image_path):
     """, unsafe_allow_html=True)
 
 # Set background
-set_background("blue lung image.jpg")
-
+set_background("lung image.jpg")
 
 # Title
-st.markdown("<h1>😽 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center;'>🔬 Predict: Positive or Negative </h2><hr>", unsafe_allow_html=True)
+st.markdown("<h1>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>🔬 Predict: Positive or Negative Only</h3><hr>", unsafe_allow_html=True)
 
 # Field categories
 yes_no_features = [
@@ -80,9 +78,9 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("🩺 Predict"):
-      prediction = model.predict([inputs])[0]
-      probability = np.max(model.predict_proba([inputs])) * 100
-       
+        prediction = model.predict([inputs])[0]
+        probability = np.max(model.predict_proba([inputs])) * 100
+
         st.markdown("<h2>🧬 Prediction Result:</h2>", unsafe_allow_html=True)
         if prediction == 0:
             st.success(f"✅ **Negative Lung Cancer** ({probability:.2f}% confidence)")
@@ -95,7 +93,7 @@ with col1:
             st.markdown("- Broccoli, Spinach, Berries")
             st.markdown("- Garlic, Ginger, Green Tea")
             st.markdown("- Omega-3 rich Fish")
-       
+
 with col2:
     if st.button("🔄 Clear"):
         st.experimental_rerun()
