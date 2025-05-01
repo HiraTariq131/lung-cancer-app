@@ -17,7 +17,8 @@ def set_background(image_path):
             background-image: url("data:image/jpg;base64,{b64_img}");
             background-size: cover;
             background-attachment: fixed;
-            background-position: center;
+            background-repeat: no-repeat;
+            background-position: center,center;
         }}
         h1 {{
             color: white !important;
@@ -42,11 +43,12 @@ def set_background(image_path):
     """, unsafe_allow_html=True)
 
 # Set background
-set_background("lung image.jpg")
+set_background("blue lung image.jpg")
+
 
 # Title
-st.markdown("<h1>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center;'>🔬 Predict: Positive or Negative Only</h3><hr>", unsafe_allow_html=True)
+st.markdown("<h1>😽 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>🔬 Predict: Positive or Negative </h2><hr>", unsafe_allow_html=True)
 
 # Field categories
 yes_no_features = [
