@@ -17,7 +17,7 @@ def set_background(image_path):
             background-image: url("data:image/jpg;base64,{b64_img}");
             background-size: cover;
             background-attachment: fixed;
-            background-position: center;
+            background-position: below,center;
         }}
         h1 {{
             color: white !important;
