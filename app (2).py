@@ -80,7 +80,7 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("🩺 Predict"):
-        prediction = model.predict([inputs])[0]
+        prediction = model.predict([inputs])[1]
         probability = np.max(model.predict_proba([inputs])) * 100
 
         st.markdown("<h2>🧬 Prediction Result:</h2>", unsafe_allow_html=True)
