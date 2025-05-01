@@ -42,7 +42,8 @@ def set_background(image_path):
     """, unsafe_allow_html=True)
 
 # Set background
-set_background("lung image.jpg")
+set_background("blue lung image.jpg")
+
 
 # Title
 st.markdown("<h1>🫁 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
