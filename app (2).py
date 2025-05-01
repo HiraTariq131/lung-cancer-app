@@ -8,40 +8,27 @@ model = joblib.load("lung_model.joblib")
 features = joblib.load("features.joblib")
 
 # Set background image
-def set_background(image_path):
-    with open(image_path, "rb") as img:
-        b64_img = base64.b64encode(img.read()).decode()
-    st.markdown(f"""
+def set_background(image_file):
+    with open(image_file, "rb") as image:
+        base64_image = base64.b64encode(image.read()).decode()
+    st.markdown(
+        f"""
         <style>
         .stApp {{
-            background-image: url("data:image/jpg;base64,{b64_img}");
-           background-size: contain;
-background-repeat: no-repeat;
-background-position: center;
-background-attachment: fixed;
-
-        }}
-        h1 {{
-            color: white !important;
-            font-size: 60px !important;
-            font-weight: bold !important;
-            text-align: center;
-        }}
-        h2, h3, h4, h5, h6, p, label, .stSelectbox label {{
-            color: white !important;
-            font-size: 22px !important;
-            font-weight: bold !important;
-        }}
-        .stButton > button {{
-            background-color: #0077b6;
-            color: white;
-            font-size: 20px;
-            border-radius: 10px;
-            padding: 0.6rem 1.2rem;
-            margin: 10px 0;
+            background-image: url("data:image/jpeg;base64,{base64_image}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
         }}
         </style>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 # Set background
 set_background("blue lung image.jpg")
