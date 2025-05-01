@@ -15,9 +15,10 @@ def set_background(image_path):
         <style>
         .stApp {{
             background-image: url("data:image/jpg;base64,{b64_img}");
-            background-size: cover;
+            background-size: contain;
             background-attachment: fixed;
-            background-position: below,center,up;
+            background-repeat: no-repeat;
+            background-position: center,center;
         }}
         h1 {{
             color: white !important;
