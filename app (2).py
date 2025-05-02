@@ -88,9 +88,10 @@ with col1:
             st.markdown(f"<p style='color:white; font-size:22px;'><b>✅ Negative Lung Cancer</b> ({probability:.2f}% confidence)</p>", unsafe_allow_html=True)
             st.markdown("<p style='color:white;'>🟢 Stay healthy! No signs of lung cancer detected.</p>", unsafe_allow_html=True)
             st.markdown("<p style='color:white;'><b>🥗 Health Tip:</b> Eat fruits, veggies, stay active, avoid smoking.</p>", unsafe_allow_html=True)
-            st.markdown("<p style='color:white;'>- Carrot, Cucumber, Berries</p>", unsafe_allow_html=True)
-            st.markdown("<p style='color:white;'>- Apple, Orange, Green Tea</p>", unsafe_allow_html=True)
-            st.markdown("<p style='color:white;'>- Omega-3 rich Fish</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:white;'>• Carrot, Cucumber, Berries</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:white;'>• Apple, Orange, Green Tea</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:white;'>• Omega-3 rich Fish</p>", unsafe_allow_html=True)
+
 
         else:
             st.error(f"🚨 **Positive Lung Cancer** ({probability:.2f}% confidence)")
