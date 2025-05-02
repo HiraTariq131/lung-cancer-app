@@ -18,7 +18,7 @@ def set_background(image_path):
             background-size: cover;
             background-attachment: fixed;
             background-repeat: no-repeat;
-            background-position: center;
+            background-position: between,center;
             height: 100vh;
         }}
         h1 {{
