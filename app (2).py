@@ -29,14 +29,14 @@ def set_background(image_path):
         }}
         h2, h3, h4, h5, h6, p, label, .stSelectbox label {{
             color: white !important;
-            font-size: 22px !important;
+            font-size: 24px !important;
             font-weight: bold !important;
         }}
         .stButton > button {{
             background-color: #0077b6;
             color: white;
-            font-size: 20px;
-            border-radius: 10px;
+            font-size: 24px;
+            border-radius: 14px;
             padding: 0.6rem 1.2rem;
             margin: 10px 0;
         }}
