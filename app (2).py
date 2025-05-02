@@ -88,6 +88,9 @@ with col1:
             st.success(f"✅ **Negative Lung Cancer** ({probability:.2f}% confidence)")
             st.info("🟢 Stay healthy! No signs of lung cancer detected.")
             st.markdown("**🥗 Health Tip:** Eat fruits, veggies, stay active, avoid smoking.")
+            st.markdown("- Carrot, Cucumber, Berries")
+            st.markdown("- Apple, Orange, Green Tea")
+            st.markdown("- Omega-3 rich Fish")
         else:
             st.error(f"🚨 **Positive Lung Cancer** ({probability:.2f}% confidence)")
             st.warning("📝 See an oncologist immediately.")
