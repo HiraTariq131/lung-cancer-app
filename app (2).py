@@ -18,7 +18,7 @@ def set_background(image_path):
             background-size: cover;
             background-attachment: fixed;
             background-repeat: no-repeat;
-            background-position: below,center,center;
+            background-position: center;
             height: 100vh;
         }}
         h1 {{
@@ -46,20 +46,19 @@ def set_background(image_path):
 # Set background
 set_background("blue lung image.jpg")
 
-
 # Title
-st.markdown("<h1>😽 Lung Cancer Predictor </h1>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center;'>📝 Predict: Positive or Negative </h1><hr>", unsafe_allow_html=True)
-# Field categories
+st.markdown("<h1>😽 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>📝 Predict: Positive or Negative</h1><hr>", unsafe_allow_html=True)
+
+# Define Yes/No features
 yes_no_features = [
     "SMOKING", "YELLOW_FINGERS", "ANXIETY", "PEER_PRESSURE", "CHRONIC DISEASE",
     "FATIGUE", "ALLERGY", "WHEEZING", "ALCOHOL CONSUMING", "COUGHING",
     "SHORTNESS OF BREATH", "SWALLOWING DIFFICULTY", "CHEST PAIN"
 ]
 
+# Input fields
 inputs = []
-
-# Generate input fields
 for feature in features:
     label = feature.replace("_", " ").title()
     if feature == "GENDER":
@@ -75,7 +74,7 @@ for feature in features:
         value = st.selectbox(label, ["No", "Yes"])
         inputs.append(1 if value == "Yes" else 0)
 
-# Button row
+# Buttons
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -84,6 +83,7 @@ with col1:
         probability = np.max(model.predict_proba([inputs])) * 100
 
         st.markdown("<h2>🧬 Prediction Result:</h2>", unsafe_allow_html=True)
+
         if prediction == 0:
             st.markdown(f"<p style='color:white; font-size:26px;'><b>✅ Negative Lung Cancer</b> ({probability:.2f}% confidence)</p>", unsafe_allow_html=True)
             st.markdown("<p style='color:white;'>🥰 Stay healthy! No signs of lung cancer detected.</p>", unsafe_allow_html=True)
@@ -91,15 +91,13 @@ with col1:
             st.markdown("<p style='color:white;'>• Carrot, Cucumber, Berries</p>", unsafe_allow_html=True)
             st.markdown("<p style='color:white;'>• Apple, Orange, Green Tea</p>", unsafe_allow_html=True)
             st.markdown("<p style='color:white;'>• Omega-3 rich Fish</p>", unsafe_allow_html=True)
-
-
         else:
-            st.error(f"🚨 **Positive Lung Cancer** ({probability:.2f}% confidence)")
-            st.warning("📝 See an oncologist immediately.")
-            st.markdown("**🍎 Healthy Food Suggestions:**")
-            st.markdown("- Broccoli, Spinach, Berries")
-            st.markdown("- Garlic, Ginger, Green Tea")
-            st.markdown("- Omega-3 rich Fish")
+            st.markdown(f"<p style='color:#ff4b4b; font-size:26px;'><b>🚨 Positive Lung Cancer</b> ({probability:.2f}% confidence)</p>", unsafe_allow_html=True)
+            st.warning("📝 Please consult an oncologist immediately.")
+            st.markdown("<p style='color:white;'><b>🍎 Healthy Food Suggestions:</b></p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:white;'>• Broccoli, Spinach, Berries</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:white;'>• Garlic, Ginger, Green Tea</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:white;'>• Omega-3 rich Fish</p>", unsafe_allow_html=True)
 
 with col2:
     if st.button("🔄 Clear"):
@@ -110,5 +108,6 @@ with col3:
         st.markdown("### Thank you for using the Lung Cancer Predictor App.")
         st.stop()
 
+# Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: white; font-size: 18px;'>Made with ❤️ by Hira Tariq | 2025</p>", unsafe_allow_html=True)
