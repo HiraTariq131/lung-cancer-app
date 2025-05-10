@@ -44,7 +44,7 @@ def set_background(image_path):
     """, unsafe_allow_html=True)
 
 # Set background
-set_background("solid imagesss.avif")
+set_background("solid imagess.avif")
 
 # Title
 st.markdown("<h1>😽 Lung Cancer Predictor</h1>", unsafe_allow_html=True)
